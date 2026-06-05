@@ -1,24 +1,28 @@
 const express = require("express");
-
+require("dotenv").config();
 const authRoutes = require("./src/routes/authRoutes");
 const userRoutes = require("./src/routes/userRoutes");
 const chatRoutes = require("./src/routes/chatRoutes");
 const aiRoutes = require("./src/routes/aiRoutes");
-
+const requestRoutes = require("./src/routes/requestRoutes");
+const mentorshipRoutes = require("./src/routes/mentorshipRoutes");
 const app = express();
 
 app.use(express.json());
 
 app.use("/api/auth", authRoutes);
+app.use("/api/mentorships", mentorshipRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/chat", chatRoutes);
 app.use("/api/ai", aiRoutes);
 
+app.use("/api/requests", requestRoutes);
 app.get("/", (req, res) => {
   res.send("Mentor-Mentee Backend Running");
 });
 
 app.listen(5000, () => {
+  console.log(process.env.GEMINI_API_KEY);
   console.log("🚀 Server running on port 5000");
   console.log("Home: http://localhost:5000");
   console.log("Auth: http://localhost:5000/api/auth");
