@@ -3,9 +3,15 @@ const supabase = require("../config/supabase");
 // Get all goals
 exports.getGoals = async (req, res) => {
   try {
-    const { data, error } = await supabase
-      .from("goals")
-      .select("*");
+    const { mentorship_id } = req.query;
+
+    let query = supabase.from("goals").select("*");
+
+    if (mentorship_id) {
+      query = query.eq("mentorship_id", mentorship_id);
+    }
+
+    const { data, error } = await query;
 
     if (error) throw error;
 
@@ -22,26 +28,28 @@ exports.getGoals = async (req, res) => {
 exports.createGoal = async (req, res) => {
   try {
     const {
-   mentorship_id,
-   mentee_id,
-   title,
-   description,
-   status,
-   priority,
-   target_date,
-   progress_percentage
-   } = req.body;
+      mentorship_id,
+      mentee_id,
+      title,
+      description,
+      status,
+      priority,
+      target_date,
+      progress_percentage,
+    } = req.body;
 
     const { data, error } = await supabase
       .from("goals")
       .insert([
         {
+          mentorship_id,
+          mentee_id,
           title,
           description,
           status,
           priority,
           target_date,
-          progress_percentage
+          progress_percentage,
         },
       ])
       .select();
@@ -65,7 +73,14 @@ exports.updateGoal = async (req, res) => {
   try {
     const { id } = req.params;
 
-    const { title, description, status, deadline } = req.body;
+    const {
+      title,
+      description,
+      status,
+      priority,
+      target_date,
+      progress_percentage,
+    } = req.body;
 
     const { data, error } = await supabase
       .from("goals")
@@ -73,7 +88,9 @@ exports.updateGoal = async (req, res) => {
         title,
         description,
         status,
-        deadline,
+        priority,
+        target_date,
+        progress_percentage,
       })
       .eq("id", id)
       .select();
