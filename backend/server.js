@@ -27,7 +27,10 @@ app.use("/api/mentorships", mentorshipRoutes);
 app.get("/", (req, res) => {
   res.send("Mentor-Mentee Backend Running");
 });
-
+app.get("/test", (req, res) => {
+  console.log("TEST HIT");
+  res.send("Working");
+});
 // Start Server
 app.listen(5000, () => {
   console.log("🚀 Server running on port 5000");
