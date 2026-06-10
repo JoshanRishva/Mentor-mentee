@@ -2,13 +2,6 @@ const supabase = require("../config/supabase");
 
 // Create Conversation
 const createConversation = async (mentorshipId) => {
-
-  const test = await supabase
-    .from("conversations")
-    .select("*");
-
-  console.log("TEST SELECT:", test);
-
   const { data, error } = await supabase
     .from("conversations")
     .insert([
@@ -18,9 +11,6 @@ const createConversation = async (mentorshipId) => {
     ])
     .select()
     .single();
-
-  console.log("Data:", data);
-  console.log("Error:", error);
 
   if (error) throw error;
 
@@ -46,13 +36,15 @@ const sendMessage = async (
   senderId,
   content
 ) => {
-  const { data, error } = await supabase
+    const { data, error } = await supabase
     .from("messages")
     .insert([
       {
         conversation_id: conversationId,
         sender_id: senderId,
         content: content,
+        delivered: false,
+        is_read: false
       },
     ])
     .select()
@@ -74,7 +66,10 @@ const sendMessage = async (
 const getMessages = async (conversationId) => {
   const { data, error } = await supabase
     .from("messages")
-    .select("*")
+    .select(`
+      *,
+      users(full_name)
+    `)
     .eq("conversation_id", conversationId)
     .order("created_at", {
       ascending: true,
@@ -84,10 +79,111 @@ const getMessages = async (conversationId) => {
 
   return data;
 };
+//File Sharing
+
+  
+const uploadFileMessage = async (
+  conversationId,
+  senderId,
+  file
+) => {
+  const isImage =
+    file.mimetype.startsWith("image/");
+
+  const fileName =
+    `${Date.now()}-${file.originalname}`;
+
+  const { error: uploadError } =
+    await supabase.storage
+      .from("chat-files")
+      .upload(
+        fileName,
+        file.buffer,
+        {
+          contentType: file.mimetype
+        }
+      );
+
+  if (uploadError)
+    throw uploadError;
+
+  const { data: publicUrlData } =
+    supabase.storage
+      .from("chat-files")
+      .getPublicUrl(fileName);
+
+  const publicUrl =
+    publicUrlData.publicUrl;
+
+  const { data, error } =
+  await supabase
+    .from("messages")
+    .insert([
+      {
+        conversation_id: conversationId,
+        sender_id: senderId,
+        message_type:
+          isImage
+            ? "image"
+            : "file",
+        content:
+          file.originalname,
+        file_url:
+          publicUrl
+      }
+    ])
+    .select()
+    .single();
+
+  if (error)
+    throw error;
+
+  return data;
+};
+
+//ReadReceipts
+
+async function markConversationAsRead(conversationId, currentUserId) {
+  
+    const { data, error } = await supabase
+    .from("messages")
+    .update({
+      is_read: true,
+      read_at: new Date().toISOString()
+    })
+    .eq("conversation_id", conversationId)
+    .neq("sender_id", currentUserId)
+    .eq("is_read", false)
+    .select();
+
+  if (error) throw error;
+
+  return data;
+}
+
+//Typing Indicator
+
+const sendTypingStatus = async (
+  conversationId,
+  userId,
+  typing
+) => {
+
+  return {
+    conversationId,
+    userId,
+    typing,
+    timestamp: new Date().toISOString()
+  };
+
+};
 
 module.exports = {
   createConversation,
   getConversationByMentorship,
   sendMessage,
   getMessages,
+  uploadFileMessage,
+  markConversationAsRead,
+  sendTypingStatus
 };
