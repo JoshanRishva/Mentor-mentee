@@ -1,6 +1,6 @@
-const supabase = require('../config/supabase');
+const jwt = require('jsonwebtoken');
 
-const authMiddleware = async (req, res, next) => {
+const authMiddleware = (req, res, next) => {
   try {
     // Get token from header
     const authHeader = req.headers.authorization;
@@ -13,6 +13,7 @@ const authMiddleware = async (req, res, next) => {
     }
 
     // Format: Bearer TOKEN
+    // Split "Bearer TOKEN" and get the token part
     const token = authHeader.split(' ')[1];
 
     if (!token) {
@@ -22,26 +23,38 @@ const authMiddleware = async (req, res, next) => {
       });
     }
 
-    // Verify user with Supabase
-    const {
-      data: { user },
-      error,
-    } = await supabase.auth.getUser(token);
+    // ✅ VERIFY JWT using jwt.verify() with your JWT_SECRET
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-    if (error || !user) {
+    // Attach decoded user info to request object
+    // Now all controller functions can access req.user
+    req.user = {
+      id: decoded.id,
+      email: decoded.email,
+      role: decoded.role,
+    };
+
+    // Continue to next middleware/route
+    next();
+  } catch (err) {
+    console.error('Auth Middleware Error:', err.message);
+
+    // Handle different JWT errors with specific messages
+    if (err.name === 'TokenExpiredError') {
       return res.status(401).json({
         success: false,
-        message: 'Unauthorized',
+        message: 'Token expired',
       });
     }
 
-    // Attach user to request
-    req.user = user;
+    if (err.name === 'JsonWebTokenError') {
+      return res.status(401).json({
+        success: false,
+        message: 'Invalid token',
+      });
+    }
 
-    next();
-  } catch (err) {
-    console.error('Auth Middleware Error:', err);
-
+    // Generic server error
     res.status(500).json({
       success: false,
       message: 'Server Error',
