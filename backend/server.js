@@ -9,6 +9,7 @@ const aiRoutes = require("./src/routes/aiRoutes");
 const goalRoutes = require("./src/routes/goalRoutes");
 const requestRoutes = require("./src/routes/requestRoutes");
 const mentorshipRoutes = require("./src/routes/mentorshipRoutes");
+const taskRoutes = require("./src/routes/taskRoutes");
 
 const app = express();
 
@@ -22,7 +23,7 @@ app.use("/api/ai", aiRoutes);
 app.use("/api/goals", goalRoutes);
 app.use("/api/requests", requestRoutes);
 app.use("/api/mentorships", mentorshipRoutes);
-
+app.use("/api/tasks", taskRoutes);
 // Home Route
 app.get("/", (req, res) => {
   res.send("Mentor-Mentee Backend Running");
@@ -42,4 +43,5 @@ app.listen(5000, () => {
   console.log("Goals: http://localhost:5000/api/goals");
   console.log("Requests: http://localhost:5000/api/requests");
   console.log("Mentorships: http://localhost:5000/api/mentorships");
+  console.log("Tasks: http://localhost:5000/api/tasks");
 });
