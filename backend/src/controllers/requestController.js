@@ -353,6 +353,7 @@ const { rows } = await pool.query(
 );
 
 // If mentor accepted, create mentorship record
+// If mentor accepted, create mentorship record
 if (status === "accepted") {
   const request = rows[0];
 
@@ -360,18 +361,22 @@ if (status === "accepted") {
     `
     INSERT INTO mentorships
     (
+      id,
       mentor_id,
       mentee_id,
       request_id,
+      project_id,
       status,
       start_date,
       goals_summary
     )
     VALUES
     (
+      gen_random_uuid(),
       $1,
       $2,
       $3,
+      $4,
       'active',
       CURRENT_DATE,
       'Mentorship started from accepted request'
@@ -381,14 +386,13 @@ if (status === "accepted") {
     [
       request.mentor_id,
       request.mentee_id,
-      request.id
+      request.id,
+      request.project_id   // ✅ added
     ]
   );
 
-  console.log(
-    "Mentorship created:",
-    mentorshipRows[0].id
-  );
+  console.log("Mentorship created:", mentorshipRows[0].id);
+
 }
 
 res.json({

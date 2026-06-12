@@ -1,12 +1,24 @@
 const express = require("express");
+
 const router = express.Router();
 
-router.post("/send", async (req, res) => {
-  res.json({ message: "Message Sent" });
-});
+const chatController = require(
+  "../controllers/chatController"
+);
 
-router.get("/:mentorId/:menteeId", async (req, res) => {
-  res.json({ message: "Chat History" });
-});
+router.post(
+  "/conversation",
+  chatController.createConversation
+);
+
+router.post(
+  "/message",
+  chatController.sendMessage
+);
+
+router.get(
+  "/messages/:conversationId",
+  chatController.getMessages
+);
 
 module.exports = router;
