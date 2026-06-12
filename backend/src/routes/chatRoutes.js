@@ -1,10 +1,14 @@
 const express = require("express");
 
+const upload =  require("../middleware/upload");
+
 const router = express.Router();
 
 const chatController = require(
   "../controllers/chatController"
 );
+
+
 
 router.post(
   "/conversation",
@@ -19,6 +23,22 @@ router.post(
 router.get(
   "/messages/:conversationId",
   chatController.getMessages
+);
+
+router.post(
+  "/file",
+  upload.single("file"),
+  chatController.uploadFile
+);
+
+router.patch(
+  "/conversations/:conversationId/read",
+  chatController.markConversationAsRead
+);
+
+router.post(
+  "/typing",
+  chatController.sendTypingStatus
 );
 
 module.exports = router;

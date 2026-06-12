@@ -9,6 +9,7 @@ const mentorshipRoutes = require("./src/routes/mentorshipRoutes");
 const roadmapRoutes = require("./src/routes/roadmapRoutes");
 const emailAssistantRoutes = require("./src/routes/emailassitantRoutes");
 const profileRoutes = require("./src/routes/profileRoutes");
+const taskRoutes = require("./src/routes/taskRoutes");
 
 const app = express();
 app.use(express.json());
@@ -22,6 +23,9 @@ app.use("/api/roadmaps", roadmapRoutes);
 app.use("/api/requests", requestRoutes);
 app.use("/api/email-assistant", emailAssistantRoutes);
 app.use("/api/profile", profileRoutes);
+app.use("/api/mentorships", mentorshipRoutes);
+app.use("/api/tasks", taskRoutes);
+// Home Route
 app.get("/", (req, res) => {
   res.send("Mentor-Mentee Backend Running");
 });
@@ -34,4 +38,8 @@ app.listen(5000, () => {
   console.log("Users: http://localhost:5000/api/users");
   console.log("Chat: http://localhost:5000/api/chat");
   console.log("AI: http://localhost:5000/api/ai");
+  console.log("Goals: http://localhost:5000/api/goals");
+  console.log("Requests: http://localhost:5000/api/requests");
+  console.log("Mentorships: http://localhost:5000/api/mentorships");
+  console.log("Tasks: http://localhost:5000/api/tasks");
 });
