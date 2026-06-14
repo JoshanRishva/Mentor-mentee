@@ -1,5 +1,6 @@
 const express = require("express");
 require("dotenv").config();
+const cors = require("cors");
 const authRoutes = require("./src/routes/authRoutes");
 const userRoutes = require("./src/routes/userRoutes");
 const chatRoutes = require("./src/routes/chatRoutes");
@@ -11,8 +12,13 @@ const emailAssistantRoutes = require("./src/routes/emailassitantRoutes");
 const profileRoutes = require("./src/routes/profileRoutes");
 const taskRoutes = require("./src/routes/taskRoutes");
 
+const goalsRoutes = require("./src/routes/goalRoutes");
+
+const pool = require("./src/config/db");
+
 const app = express();
 app.use(express.json());
+app.use(cors());
 
 app.use("/api/auth", authRoutes);
 app.use("/api/mentorships", mentorshipRoutes);
@@ -25,6 +31,7 @@ app.use("/api/email-assistant", emailAssistantRoutes);
 app.use("/api/profile", profileRoutes);
 app.use("/api/mentorships", mentorshipRoutes);
 app.use("/api/tasks", taskRoutes);
+app.use("/api/goals", goalsRoutes);
 // Home Route
 app.get("/", (req, res) => {
   res.send("Mentor-Mentee Backend Running");
