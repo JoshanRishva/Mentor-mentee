@@ -1,7 +1,11 @@
 const express = require("express");
 const cors = require("cors");
 require("dotenv").config();
+<<<<<<< HEAD
 
+=======
+const cors = require("cors");
+>>>>>>> 1850406663b70c486fcae42ca9d99f53bf06ec77
 const authRoutes = require("./src/routes/authRoutes");
 const userRoutes = require("./src/routes/userRoutes");
 const chatRoutes = require("./src/routes/chatRoutes");
@@ -12,6 +16,10 @@ const roadmapRoutes = require("./src/routes/roadmapRoutes");
 const emailAssistantRoutes = require("./src/routes/emailassitantRoutes");
 const profileRoutes = require("./src/routes/profileRoutes");
 const taskRoutes = require("./src/routes/taskRoutes");
+
+const goalsRoutes = require("./src/routes/goalRoutes");
+
+const pool = require("./src/config/db");
 
 const app = express();
 
@@ -27,6 +35,7 @@ app.use(
 
 // Parse JSON request bodies
 app.use(express.json());
+app.use(cors());
 
 /* -------------------- Routes -------------------- */
 
@@ -40,9 +49,14 @@ app.use("/api/roadmaps", roadmapRoutes);
 app.use("/api/email-assistant", emailAssistantRoutes);
 app.use("/api/profile", profileRoutes);
 app.use("/api/tasks", taskRoutes);
+<<<<<<< HEAD
 
 /* -------------------- Home Route -------------------- */
 
+=======
+app.use("/api/goals", goalsRoutes);
+// Home Route
+>>>>>>> 1850406663b70c486fcae42ca9d99f53bf06ec77
 app.get("/", (req, res) => {
   res.send("Mentor-Mentee Backend Running");
 });
