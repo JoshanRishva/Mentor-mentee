@@ -1,5 +1,7 @@
 const express = require("express");
+const cors = require("cors");
 require("dotenv").config();
+
 const authRoutes = require("./src/routes/authRoutes");
 const userRoutes = require("./src/routes/userRoutes");
 const chatRoutes = require("./src/routes/chatRoutes");
@@ -12,34 +14,53 @@ const profileRoutes = require("./src/routes/profileRoutes");
 const taskRoutes = require("./src/routes/taskRoutes");
 
 const app = express();
+
+/* -------------------- Middleware -------------------- */
+
+// Enable CORS for your React Vite frontend
+app.use(
+  cors({
+    origin: "http://localhost:5173",
+    credentials: true,
+  })
+);
+
+// Parse JSON request bodies
 app.use(express.json());
 
+/* -------------------- Routes -------------------- */
+
 app.use("/api/auth", authRoutes);
-app.use("/api/mentorships", mentorshipRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/chat", chatRoutes);
 app.use("/api/ai", aiRoutes);
-app.use("/api/roadmaps", roadmapRoutes);
 app.use("/api/requests", requestRoutes);
+app.use("/api/mentorships", mentorshipRoutes);
+app.use("/api/roadmaps", roadmapRoutes);
 app.use("/api/email-assistant", emailAssistantRoutes);
 app.use("/api/profile", profileRoutes);
-app.use("/api/mentorships", mentorshipRoutes);
 app.use("/api/tasks", taskRoutes);
-// Home Route
+
+/* -------------------- Home Route -------------------- */
+
 app.get("/", (req, res) => {
   res.send("Mentor-Mentee Backend Running");
 });
 
-app.listen(5000, () => {
-  console.log(process.env.GEMINI_API_KEY);
-  console.log("🚀 Server running on port 5000");
-  console.log("Home: http://localhost:5000");
-  console.log("Auth: http://localhost:5000/api/auth");
-  console.log("Users: http://localhost:5000/api/users");
-  console.log("Chat: http://localhost:5000/api/chat");
-  console.log("AI: http://localhost:5000/api/ai");
-  console.log("Goals: http://localhost:5000/api/goals");
-  console.log("Requests: http://localhost:5000/api/requests");
-  console.log("Mentorships: http://localhost:5000/api/mentorships");
-  console.log("Tasks: http://localhost:5000/api/tasks");
+/* -------------------- Start Server -------------------- */
+
+const PORT = 5000;
+
+app.listen(PORT, () => {
+  console.log("🚀 Server running on port", PORT);
+  console.log(`Home: http://localhost:${PORT}`);
+  console.log(`Auth: http://localhost:${PORT}/api/auth`);
+  console.log(`Users: http://localhost:${PORT}/api/users`);
+  console.log(`Chat: http://localhost:${PORT}/api/chat`);
+  console.log(`AI: http://localhost:${PORT}/api/ai`);
+  console.log(`Requests: http://localhost:${PORT}/api/requests`);
+  console.log(`Mentorships: http://localhost:${PORT}/api/mentorships`);
+  console.log(`Roadmaps: http://localhost:${PORT}/api/roadmaps`);
+  console.log(`Profile: http://localhost:${PORT}/api/profile`);
+  console.log(`Tasks: http://localhost:${PORT}/api/tasks`);
 });
