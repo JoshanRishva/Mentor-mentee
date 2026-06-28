@@ -1,6 +1,6 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-
-import LoginPage from "../features/auth/pages/Login.jsx";
+import LoginPage from "../features/auth/pages/LoginPage";
+import { AuthProvider } from "../features/auth";
 
 function Dashboard() {
   return <h1>Dashboard</h1>;
@@ -9,11 +9,13 @@ function Dashboard() {
 export default function AppRoutes() {
   return (
     <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<LoginPage />} />
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/dashboard" element={<Dashboard />} />
-      </Routes>
+      <AuthProvider>
+        <Routes>
+          <Route path="/" element={<LoginPage />} />
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/dashboard" element={<Dashboard />} />
+        </Routes>
+      </AuthProvider>
     </BrowserRouter>
   );
 }
