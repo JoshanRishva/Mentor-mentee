@@ -1,8 +1,10 @@
+
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, ProtectedRoute } from './features/auth';
 import LoginPage from './features/auth/pages/LoginPage';
 import RegisterPage from './features/auth/pages/RegisterPage';
 import Dashboard from './pages/Dashboard';
+import ChatPage from "./pages/ChatPage";
 
 function App() {
   return (
@@ -21,6 +23,9 @@ function App() {
       </AuthProvider>
     </Router>
   );
+
+
+  return <ChatPage />;
 }
 
 export default App;

@@ -1,6 +1,7 @@
 const express = require("express");
-require("dotenv").config();
 const cors = require("cors");
+require("dotenv").config()
+
 const cookieParser = require("cookie-parser");
 const authRoutes = require("./src/routes/authRoutes");
 const userRoutes = require("./src/routes/userRoutes");
@@ -11,14 +12,23 @@ const mentorshipRoutes = require("./src/routes/mentorshipRoutes");
 const roadmapRoutes = require("./src/routes/roadmapRoutes");
 const emailAssistantRoutes = require("./src/routes/emailassitantRoutes");
 const profileRoutes = require("./src/routes/profileRoutes");
-const taskRoutes = require("./src/routes/taskRoutes");
 const goalsRoutes = require("./src/routes/goalRoutes");
-
-const pool = require("./src/config/db");
-
+const taskRoutes = require("./src/routes/taskRoutes");
 const app = express();
 
 // Middleware
+
+/* -------------------- Middleware -------------------- */
+
+// Enable CORS for your React Vite frontend
+app.use(
+  cors({
+    origin: "http://localhost:5173",
+    credentials: true,
+  })
+);
+
+// Parse JSON request bodies
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -32,6 +42,8 @@ app.use(
 
 app.use(cookieParser());
 
+/* -------------------- Routes -------------------- */
+
 // Routes
 app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
@@ -43,6 +55,9 @@ app.use("/api/roadmaps", roadmapRoutes);
 app.use("/api/email-assistant", emailAssistantRoutes);
 app.use("/api/profile", profileRoutes);
 app.use("/api/tasks", taskRoutes);
+
+/* -------------------- Home Route -------------------- */
+
 app.use("/api/goals", goalsRoutes);
 
 // Home Route
