@@ -1,63 +1,50 @@
-const jwt = require('jsonwebtoken');
+const jwt = require("jsonwebtoken");
 
 const authMiddleware = (req, res, next) => {
   try {
-    // Get token from header
-    const authHeader = req.headers.authorization;
-
-    if (!authHeader) {
-      return res.status(401).json({
-        success: false,
-        message: 'No token provided',
-      });
-    }
-
-    // Format: Bearer TOKEN
-    // Split "Bearer TOKEN" and get the token part
-    const token = authHeader.split(' ')[1];
+    // Get token from cookie
+    const token = req.cookies.token;
 
     if (!token) {
       return res.status(401).json({
         success: false,
-        message: 'Invalid token format',
+        message: "No token provided",
       });
     }
 
-    // ✅ VERIFY JWT using jwt.verify() with your JWT_SECRET
+    // Verify JWT token
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-    // Attach decoded user info to request object
-    // Now all controller functions can access req.user
+    // Attach user info to request object
     req.user = {
       id: decoded.id,
       email: decoded.email,
       role: decoded.role,
     };
 
-    // Continue to next middleware/route
     next();
   } catch (err) {
-    console.error('Auth Middleware Error:', err.message);
+    console.error("Auth Middleware Error:", err.message);
 
-    // Handle different JWT errors with specific messages
-    if (err.name === 'TokenExpiredError') {
+    // Handle specific JWT errors
+    if (err.name === "TokenExpiredError") {
       return res.status(401).json({
         success: false,
-        message: 'Token expired',
+        message: "Token expired. Please login again",
       });
     }
 
-    if (err.name === 'JsonWebTokenError') {
+    if (err.name === "JsonWebTokenError") {
       return res.status(401).json({
         success: false,
-        message: 'Invalid token',
+        message: "Invalid token",
       });
     }
 
     // Generic server error
     res.status(500).json({
       success: false,
-      message: 'Server Error',
+      message: "Authentication error",
     });
   }
 };
